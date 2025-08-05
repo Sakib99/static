@@ -33,13 +33,12 @@
       scroll-behavior: smooth;
     }
 
-    /* NAVIGATION */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       background: rgba(11,17,32,0.95);
       z-index: 1000;
-      padding: 1rem 1rem;
+      padding: 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -78,7 +77,6 @@
       color: var(--accent);
     }
 
-    /* DROPDOWN MOBILE */
     @media (max-width: 768px) {
       .nav-toggle {
         display: block;
@@ -107,7 +105,6 @@
       }
     }
 
-    /* SECTIONS */
     section {
       min-height: 100vh;
       display: flex;
@@ -250,7 +247,6 @@
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav>
     <div class="nav-brand">Cloud DevOps</div>
     <button class="nav-toggle" onclick="toggleMenu()">☰</button>
@@ -265,10 +261,8 @@
     </div>
   </nav>
 
-  <!-- Background Canvas -->
   <canvas id="bg-canvas"></canvas>
 
-  <!-- Sections -->
   <section id="devops">
     <div class="overlay"></div>
     <div class="content">
@@ -322,31 +316,28 @@
       </div>
     </div>
   </section>
+
   <section id="consultation" style="background-color: rgba(255,255,255,0.03); padding: 60px 20px;">
-  <div class="content">
-    <h2>Book a Consultation</h2>
-    <p style="max-width: 700px; margin: 0 auto; line-height: 1.6;">
-      Let’s discuss how we can accelerate your cloud journey. Submit the form below and our experts will get in touch with you.
-    </p>
-    <form style="margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
-      <input type="text" name="name" placeholder="Your Name" required />
-      <input type="email" name="email" placeholder="Your Email" required />
-      <textarea name="message" rows="5" placeholder="Tell us about your project..." required></textarea>
-      <button type="submit">Request Consultation</button>
-    </form>
-  </div>
-</section>
-  
+    <div class="content">
+      <h2>Book a Consultation</h2>
+      <p>Let’s discuss how we can accelerate your cloud journey. Submit the form below and our experts will get in touch with you.</p>
+      <form style="margin-top: 30px; max-width: 600px; margin: 0 auto;">
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea rows="5" placeholder="Tell us about your project..." required></textarea>
+        <button type="submit">Request Consultation</button>
+      </form>
+    </div>
+  </section>
+
   <footer id="contact">
     <h3>Get in Touch</h3>
-    <p>Interested in working together? Reach out for a consultation.</p>
     <p>Email: <a href="mailto:contact@clouddevops.com">contact@clouddevops.com</a> | Phone: <a href="tel:+1234567890">+1 234 567 890</a></p>
     <p>&copy; 2025 Cloud DevOps Consultancy</p>
   </footer>
 
-  <!-- Scripts -->
+  <!-- Script -->
   <script>
-    // Typed.js
     new Typed("#typed-text", {
       strings: [
         "Optimizing cloud for innovation, speed, and scale.",
@@ -360,7 +351,6 @@
       loop: true
     });
 
-    // GSAP animations
     gsap.utils.toArray("section").forEach(section => {
       gsap.from(section.querySelector(".content"), {
         opacity: 0,
@@ -374,7 +364,7 @@
       });
     });
 
-    // Canvas dots animation
+    // Canvas dots + connecting lines
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let width, height, dots = [];
@@ -383,59 +373,64 @@
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 1.2;
-        this.vy = (Math.random() - 0.5) * 1.2;
+        this.vx = (Math.random() - 0.5) * 1;
+        this.vy = (Math.random() - 0.5) * 1;
         this.radius = Math.random() * 1.5 + 0.8;
-        this.baseOpacity = Math.random() * 0.4 + 0.2;
-        this.phase = Math.random() * Math.PI * 2;
+        this.opacity = Math.random() * 0.5 + 0.2;
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.phase += 0.05;
         if (this.x <= 0 || this.x >= width) this.vx *= -1;
         if (this.y <= 0 || this.y >= height) this.vy *= -1;
-      }
-
-      get radiusPulse() {
-        return this.radius + Math.sin(this.phase) * 0.5;
       }
     }
 
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      dots = Array.from({ length: 500 }, () => new Dot());
+      dots = Array.from({ length: 100 }, () => new Dot());
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
-      dots.forEach(dot => {
-        dot.update();
-        let r = dot.radiusPulse;
-        let g = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, r);
-        g.addColorStop(0, `rgba(62,244,255,${dot.baseOpacity + 0.3})`);
-        g.addColorStop(1, `rgba(62,244,255,0)`);
-        ctx.fillStyle = g;
+      for (let i = 0; i < dots.length; i++) {
+        let d = dots[i];
+        d.update();
+
+        // draw dot
         ctx.beginPath();
-        ctx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
+        ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(62,244,255,${d.opacity})`;
         ctx.fill();
-      });
+
+        // draw connecting lines
+        for (let j = i + 1; j < dots.length; j++) {
+          let d2 = dots[j];
+          let dx = d.x - d2.x;
+          let dy = d.y - d2.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(d.x, d.y);
+            ctx.lineTo(d2.x, d2.y);
+            ctx.strokeStyle = `rgba(62,244,255,${(1 - dist / 120) * 0.2})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
       requestAnimationFrame(draw);
+    }
+
+    function toggleMenu() {
+      document.getElementById("navLinks").classList.toggle("open");
     }
 
     window.addEventListener('resize', initCanvas);
     initCanvas();
     draw();
-
-    // Mobile menu toggle
-    function toggleMenu() {
-      document.getElementById("navLinks").classList.toggle("open");
-    }
   </script>
 </body>
 </html>
-
-
-
