@@ -365,13 +365,10 @@
     });
 
     // Canvas dots + connecting lines
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, dots = [];
-const canvas = document.getElementById('bg-canvas');
+   const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let width, height, dots = [];
-let maxDots = 500;
+let maxDots;
 let maxDistance;
 
 class Dot {
@@ -402,27 +399,40 @@ function initCanvas() {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
 
-  // Adjust max dots and connection distance by width
   if (width < 768) {
-    maxDots = 150;            // fewer dots on small screens
-    maxDistance = 70;         // smaller connection distance
+    maxDots = 150;
+    maxDistance = 120;
   } else if (width < 1024) {
-    maxDots = 300;            // medium dots for tablets
-    maxDistance = 100;
-  } else {
-    maxDots = 500;            // full dots for desktop
+    maxDots = 300;
     maxDistance = 150;
+  } else {
+    maxDots = 500;
+    maxDistance = 180;
   }
 
   dots = Array.from({ length: maxDots }, () => new Dot());
 }
 
+// Find N nearest neighbors for each dot (e.g., 3 nearest)
+function findNearestNeighbors(dot, dots, n = 3) {
+  const distances = dots
+    .filter(d => d !== dot)
+    .map(d => ({
+      dot: d,
+      dist: Math.hypot(dot.x - d.x, dot.y - d.y)
+    }))
+    .filter(d => d.dist <= maxDistance)
+    .sort((a, b) => a.dist - b.dist)
+    .slice(0, n);
+  return distances.map(d => d.dot);
+}
+
 function draw() {
   ctx.clearRect(0, 0, width, height);
+
+  // Update and draw dots
   dots.forEach(dot => {
     dot.update();
-    
-    // Draw the glowing dot
     let r = dot.radiusPulse;
     let gradient = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, r);
     gradient.addColorStop(0, `rgba(62,244,255,${dot.baseOpacity + 0.3})`);
@@ -433,26 +443,23 @@ function draw() {
     ctx.fill();
   });
 
-  // Draw connecting lines with adjusted maxDistance
-  for (let i = 0; i < dots.length; i++) {
-    for (let j = i + 1; j < dots.length; j++) {
-      let dx = dots[i].x - dots[j].x;
-      let dy = dots[i].y - dots[j].y;
-      let dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < maxDistance) {
-        ctx.strokeStyle = `rgba(62,244,255,${(maxDistance - dist) / maxDistance * 0.15})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(dots[i].x, dots[i].y);
-        ctx.lineTo(dots[j].x, dots[j].y);
-        ctx.stroke();
-      }
-    }
-  }
+  // Draw triangles by connecting each dot to its 3 nearest neighbors
+  ctx.strokeStyle = 'rgba(62,244,255,0.15)';
+  ctx.lineWidth = 1;
+
+  dots.forEach(dot => {
+    const neighbors = findNearestNeighbors(dot, dots, 3);
+    neighbors.forEach(neighbor => {
+      ctx.beginPath();
+      ctx.moveTo(dot.x, dot.y);
+      ctx.lineTo(neighbor.x, neighbor.y);
+      ctx.stroke();
+    });
+  });
 
   requestAnimationFrame(draw);
 }
-    function toggleMenu() {
+function toggleMenu() {
       document.getElementById("navLinks").classList.toggle("open");
     }
 window.addEventListener('resize', () => {
@@ -461,14 +468,10 @@ window.addEventListener('resize', () => {
 
 initCanvas();
 draw();
-
-
-    
    
-    
-    
   </script>
 </body>
 </html>
+
 
 
