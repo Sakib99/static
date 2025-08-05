@@ -38,9 +38,10 @@
       top: 0; left: 0; right: 0;
       background: rgba(11,17,32,0.9);
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 2rem;
-      padding: 1rem 0;
+      gap: 1rem;
+      padding: 1rem 1rem;
       z-index: 100;
       backdrop-filter: saturate(180%) blur(10px);
     }
@@ -48,9 +49,8 @@
     nav a {
       color: var(--text);
       font-weight: 600;
-      cursor: pointer;
       text-decoration: none;
-      font-size: 1rem;
+      font-size: 0.95rem;
       transition: color 0.3s ease;
     }
     nav a:hover {
@@ -63,20 +63,11 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 80px 20px 60px;
+      padding: 100px 20px 60px;
       background-size: cover;
       background-position: center center;
       position: relative;
       overflow: hidden;
-      /* Removed background-position transition */
-    }
-
-    /* DevOps section special case */
-    #devops {
-      background: none !important;
-      position: relative;
-      z-index: 0;
-      background-size: auto !important;
     }
 
     .overlay {
@@ -85,44 +76,18 @@
       background: var(--bg-overlay);
       z-index: 1;
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
+
     #devops .overlay {
       background: transparent !important;
-      pointer-events: none;
-      backdrop-filter: blur(0px);
-      -webkit-backdrop-filter: blur(0px);
+      backdrop-filter: none;
     }
-    /* Remove overlays background for migrations and finops */
-    
-@keyframes bg-move-horizontal {
-  0% {
-    background-position: left center;
-  }
-  50% {
-    background-position: right center;
-  }
-  100% {
-    background-position: left center;
-  }
-}
-
-
-   #finops {
-  background-image: url('https://source.unsplash.com/1600x900/?finops,cloud-cost');
-  background-repeat: no-repeat;
-  background-size: 200% auto; /* allow horizontal movement */
-  background-position: left center;
-  animation: bg-move-horizontal 40s ease-in-out infinite;
-  position: relative; /* to keep stacking context consistent */
-}
 
     .content {
       position: relative;
       z-index: 2;
       max-width: 1000px;
-      color: var(--text);
-      text-shadow: 0 0 10px rgba(0,0,0,0.7);
+      padding: 0 1rem;
     }
 
     h1, h2 {
@@ -132,7 +97,7 @@
     }
 
     p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       line-height: 1.6;
       max-width: 700px;
       margin: 0 auto;
@@ -146,52 +111,54 @@
     }
 
     .service {
-      background: rgba(255 255 255 / 0.05);
+      background: rgba(255, 255, 255, 0.05);
       padding: 20px;
       border-radius: 10px;
       transition: transform 0.3s ease, background 0.3s ease;
-      cursor: default;
     }
+
     .service:hover {
       transform: translateY(-10px);
-      background: rgba(62 244 255 / 0.1);
+      background: rgba(62, 244, 255, 0.1);
     }
 
     .testimonial {
-      background: rgba(255 255 255 / 0.05);
+      background: rgba(255, 255, 255, 0.05);
       padding: 20px 30px;
       margin: 1rem auto;
       border-left: 5px solid var(--accent);
       max-width: 700px;
       font-style: italic;
       color: #d4f9ff;
-      box-shadow: 0 0 15px rgba(62,244,255,0.3);
     }
+
     .testimonial strong {
       display: block;
       margin-top: 10px;
       font-weight: 700;
-      font-style: normal;
       color: var(--accent);
       text-align: right;
     }
-@keyframes bg-move-horizontal {
-  0% {
-    background-position: left center;
-  }
-  50% {
-    background-position: right center;
-  }
-  100% {
-    background-position: left center;
-  }
-}
 
-/* Apply to finops section */
-#finops {
-  animation: bg-move-horizontal 40s ease-in-out infinite;
-  background-size: 200% auto; /* Enlarged width for smooth movement */
-}
+    #finops {
+      background-image: url('https://source.unsplash.com/1600x900/?finops,cloud-cost');
+      background-repeat: no-repeat;
+      background-size: 200% auto;
+      background-position: left center;
+      animation: bg-move-horizontal 40s ease-in-out infinite;
+    }
+
+    @keyframes bg-move-horizontal {
+      0% {
+        background-position: left center;
+      }
+      50% {
+        background-position: right center;
+      }
+      100% {
+        background-position: left center;
+      }
+    }
 
     footer {
       background: #101828;
@@ -206,18 +173,11 @@
       color: var(--accent);
     }
 
-    footer p {
-      font-size: 1rem;
-    }
-
     footer a {
       color: var(--accent);
       text-decoration: none;
       margin: 0 8px;
       font-weight: 600;
-    }
-    footer a:hover {
-      text-decoration: underline;
     }
 
     form input, form textarea {
@@ -242,8 +202,8 @@
     #typed-text {
       font-size: 1.5rem;
       margin-top: 20px;
-      font-weight: 500;
       min-height: 40px;
+      font-weight: 500;
     }
 
     canvas#bg-canvas {
@@ -254,6 +214,25 @@
       display: block;
       pointer-events: none;
     }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1, h2 {
+        font-size: 2rem;
+      }
+
+      p, nav a {
+        font-size: 0.95rem;
+      }
+
+      .testimonial {
+        padding: 15px 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -261,8 +240,8 @@
   <nav>
     <a href="#devops">DevOps</a>
     <a href="#migrations">Migrations</a>
-    <a href="#ml">Machine Learning</a>
-    <a href="#security">Security & Compliance</a>
+    <a href="#ml">ML & AI</a>
+    <a href="#security">Security</a>
     <a href="#finops">FinOps</a>
     <a href="#testimonials">Testimonials</a>
     <a href="#contact">Contact</a>
@@ -270,8 +249,7 @@
 
   <canvas id="bg-canvas"></canvas>
 
-  <!-- Hero / DevOps Section -->
-  <section id="devops" >
+  <section id="devops">
     <div class="overlay"></div>
     <div class="content">
       <h1>Cloud DevOps Consultancy</h1>
@@ -281,16 +259,13 @@
     </div>
   </section>
 
-  <!-- Migrations -->
   <section id="migrations" style="background-image:url('https://source.unsplash.com/1600x900/?cloud,migration')">
-    <!-- Removed overlay div to remove background color overlay -->
     <div class="content">
       <h2>Cloud Migrations</h2>
       <p>Plan and execute seamless migrations from on-premises to multi-cloud environments, minimizing downtime and risk.</p>
     </div>
   </section>
 
-  <!-- Machine Learning -->
   <section id="ml" style="background-image:url('https://source.unsplash.com/1600x900/?machine-learning,ai')">
     <div class="overlay"></div>
     <div class="content">
@@ -299,7 +274,6 @@
     </div>
   </section>
 
-  <!-- Security -->
   <section id="security" style="background-image:url('https://source.unsplash.com/1600x900/?cloud,security')">
     <div class="overlay"></div>
     <div class="content">
@@ -308,60 +282,35 @@
     </div>
   </section>
 
-  <!-- FinOps -->
   <section id="finops">
-    <!-- Removed overlay div to remove background color overlay -->
     <div class="content">
       <h2>FinOps & Cost Optimization</h2>
       <p>Implement real-time cost monitoring, budgeting, and optimization strategies to align cloud spend with business goals.</p>
     </div>
   </section>
 
-  <!-- Testimonials -->
   <section id="testimonials">
     <div class="content">
       <h2>What Our Clients Say</h2>
       <div class="testimonial">
         <p>"Their DevOps expertise transformed our software delivery speed and reliability."</p>
-        <strong>- Alex Johnson, CTO, TechWave</strong>
+        <strong>- Alex Johnson</strong>
       </div>
       <div class="testimonial">
         <p>"A seamless cloud migration with zero downtime — highly recommended."</p>
-        <strong>- Priya Patel, IT Manager, FinServe</strong>
-      </div>
-      <div class="testimonial">
-        <p>"Their security team ensured we met compliance effortlessly."</p>
-        <strong>- Marcus Lee, Compliance Officer, HealthPlus</strong>
+        <strong>- Priya Patel</strong>
       </div>
     </div>
   </section>
 
-  <!-- Contact Footer -->
   <footer id="contact">
     <h3>Get in Touch</h3>
     <p>Interested in working together? Reach out for a consultation.</p>
     <p>Email: <a href="mailto:contact@clouddevops.com">contact@clouddevops.com</a> | Phone: <a href="tel:+1234567890">+1 234 567 890</a></p>
-    <p>&copy; 2025 Cloud DevOps Consultancy. All rights reserved.</p>
+    <p>&copy; 2025 Cloud DevOps Consultancy</p>
   </footer>
 
   <script>
-    // GSAP reveal for .content inside each section on scroll
-    // Keep default fade+slide for all sections except we add distinct animations for migrations->finops below
-    gsap.utils.toArray("section").forEach(section => {
-      if (['migrations', 'ml', 'security'].includes(section.id)) return; // skip those, animate below
-      gsap.from(section.querySelector(".content"), {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%"
-        }
-      });
-    });
-
-    // Typed.js text animation for hero typed text
     new Typed("#typed-text", {
       strings: [
         "Optimizing cloud for innovation, speed, and scale.",
@@ -375,13 +324,24 @@
       loop: true
     });
 
-    // Background Dot Animation (unchanged)
+    // GSAP scroll animations
+    gsap.utils.toArray("section").forEach(section => {
+      gsap.from(section.querySelector(".content"), {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%"
+        }
+      });
+    });
+
+    // Background dots animation
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
-
     let width, height, dots = [];
-    const DOT_COUNT = 800;
-    const CONNECTION_DISTANCE = 100;
 
     class Dot {
       constructor() {
@@ -398,7 +358,6 @@
         this.x += this.vx;
         this.y += this.vy;
         this.phase += 0.05;
-
         if (this.x <= 0 || this.x >= width) this.vx *= -1;
         if (this.y <= 0 || this.y >= height) this.vy *= -1;
       }
@@ -411,70 +370,28 @@
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      dots = [];
-      for (let i = 0; i < DOT_COUNT; i++) {
-        dots.push(new Dot());
-      }
+      dots = Array.from({ length: 500 }, () => new Dot());
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
-
-      dots.forEach(dot => {
-        let neighbors = dots.filter(other =>
-          other !== dot &&
-          Math.hypot(other.x - dot.x, other.y - dot.y) < CONNECTION_DISTANCE
-        );
-
-        neighbors.forEach(neighbor => {
-          ctx.strokeStyle = `rgba(62, 244, 255, ${0.1})`;
-          ctx.lineWidth = 0.5;
-          ctx.beginPath();
-          ctx.moveTo(dot.x, dot.y);
-          ctx.lineTo(neighbor.x, neighbor.y);
-          ctx.stroke();
-        });
-      });
-
       dots.forEach(dot => {
         dot.update();
         let r = dot.radiusPulse;
-        let gradient = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, r);
-        gradient.addColorStop(0, `rgba(62, 244, 255, ${dot.baseOpacity + 0.3})`);
-        gradient.addColorStop(1, `rgba(62, 244, 255, 0)`);
-        ctx.fillStyle = gradient;
+        let g = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, r);
+        g.addColorStop(0, `rgba(62,244,255,${dot.baseOpacity + 0.3})`);
+        g.addColorStop(1, `rgba(62,244,255,0)`);
+        ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
         ctx.fill();
       });
-
       requestAnimationFrame(draw);
     }
 
-    window.addEventListener('resize', () => {
-      initCanvas();
-    });
-
+    window.addEventListener('resize', initCanvas);
     initCanvas();
     draw();
-
-    // GSAP scroll reveals for migrations, ml, security, finops sections (without background position animation)
-    ['migrations', 'ml', 'security'].forEach(id => {
-      let section = document.getElementById(id);
-      gsap.from(section.querySelector('.content'), {
-        opacity: 0,
-        y: 40,
-        duration: 1.2,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-          end: "top 50%",
-          toggleActions: "play none none reverse"
-        }
-      });
-    });
   </script>
-
 </body>
 </html>
