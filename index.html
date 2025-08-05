@@ -370,67 +370,84 @@
     let width, height, dots = [];
 
     class Dot {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 1;
-        this.vy = (Math.random() - 0.5) * 1;
-        this.radius = Math.random() * 1.5 + 0.8;
-        this.opacity = Math.random() * 0.5 + 0.2;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x <= 0 || this.x >= width) this.vx *= -1;
-        if (this.y <= 0 || this.y >= height) this.vy *= -1;
-      }
+    constructor() {
+      this.reset();
     }
 
-    function initCanvas() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      dots = Array.from({ length: 100 }, () => new Dot());
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 1.2;
+      this.vy = (Math.random() - 0.5) * 1.2;
+      this.radius = Math.random() * 1.5 + 0.8;
+      this.opacity = Math.random() * 0.5 + 0.2;
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, width, height);
-      for (let i = 0; i < dots.length; i++) {
-        let d = dots[i];
-        d.update();
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
 
-        // draw dot
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(62,244,255,${d.opacity})`;
-        ctx.fill();
+      if (this.x <= 0 || this.x >= width) this.vx *= -1;
+      if (this.y <= 0 || this.y >= height) this.vy *= -1;
+    }
 
-        // draw connecting lines
-        for (let j = i + 1; j < dots.length; j++) {
-          let d2 = dots[j];
-          let dx = d.x - d2.x;
-          let dy = d.y - d2.y;
-          let dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(d.x, d.y);
-            ctx.lineTo(d2.x, d2.y);
-            ctx.strokeStyle = `rgba(62,244,255,${(1 - dist / 120) * 0.2})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
+    draw() {
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 2);
+      gradient.addColorStop(0, `rgba(62, 244, 255, ${this.opacity + 0.2})`);
+      gradient.addColorStop(1, "rgba(62, 244, 255, 0)");
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function connectDots(dotArray) {
+    const maxDist = 100;
+    for (let i = 0; i < dotArray.length; i++) {
+      for (let j = i + 1; j < dotArray.length; j++) {
+        const dx = dotArray[i].x - dotArray[j].x;
+        const dy = dotArray[i].y - dotArray[j].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < maxDist) {
+          const opacity = 1 - distance / maxDist;
+          ctx.strokeStyle = `rgba(62, 244, 255, ${opacity})`;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(dotArray[i].x, dotArray[i].y);
+          ctx.lineTo(dotArray[j].x, dotArray[j].y);
+          ctx.stroke();
         }
       }
-      requestAnimationFrame(draw);
     }
+  }
 
+  function initCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    dots = Array.from({ length: 120 }, () => new Dot());
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    dots.forEach(dot => {
+      dot.update();
+      dot.draw();
+    });
+    connectDots(dots);
+    requestAnimationFrame(draw);
+  }
+
+    
     function toggleMenu() {
       document.getElementById("navLinks").classList.toggle("open");
     }
-
     window.addEventListener('resize', initCanvas);
     initCanvas();
     draw();
+    
   </script>
 </body>
 </html>
+
